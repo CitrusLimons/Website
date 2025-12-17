@@ -2,49 +2,513 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Senior Project – Your Name</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Malicious Android App Detection – Senior Project</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Senior project: Malicious Android application detection using feature reduction and machine learning (CNN, LinearSVC, LightGBM)." />
   <style>
-    body { font-family: system-ui, sans-serif; margin: 2rem; max-width: 900px; }
-    h1, h2 { color: #222; }
-    code { background: #f4f4f4; padding: 0.1rem 0.3rem; border-radius: 3px; }
-    .hero img { max-width: 100%; border-radius: 6px; }
+    :root {
+      --bg: #0f172a;
+      --fg: #e5e7eb;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56,189,248,0.12);
+      --card-bg: #020617;
+      --muted: #9ca3af;
+      --border: #1f2937;
+      --danger: #f97373;
+      --good: #4ade80;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: radial-gradient(circle at top, #1e293b 0, #020617 55%);
+      color: var(--fg);
+      line-height: 1.6;
+    }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    header {
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(14px);
+      background: linear-gradient(to right, rgba(15,23,42,0.92), rgba(15,23,42,0.9));
+    }
+    .nav {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0.6rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .nav-title {
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      font-size: 0.9rem;
+    }
+    .nav-links a {
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .nav-links a:hover {
+      color: var(--fg);
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.75rem 1.25rem 3.5rem;
+    }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(260px, 2.6fr);
+      gap: 2.25rem;
+      align-items: center;
+      margin-bottom: 2.5rem;
+    }
+    @media (max-width: 860px) {
+      .hero {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.15rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      background: rgba(56,189,248,0.12);
+      color: var(--accent);
+      border: 1px solid rgba(56,189,248,0.35);
+      margin-bottom: 0.6rem;
+    }
+    .badge span.dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+    h1 {
+      font-size: clamp(1.9rem, 3vw, 2.4rem);
+      margin: 0 0 0.7rem;
+      letter-spacing: 0.02em;
+    }
+    .subtitle {
+      font-size: 0.98rem;
+      color: var(--muted);
+      max-width: 36rem;
+      margin-bottom: 0.9rem;
+    }
+    .meta {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 0.9rem;
+    }
+    .meta strong { color: var(--fg); }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 1.2rem;
+    }
+    .pill {
+      font-size: 0.75rem;
+      padding: 0.12rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(15,23,42,0.9);
+      color: var(--muted);
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 0.4rem;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.45rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+      color: #0b1120;
+      border-color: #0ea5e9;
+      box-shadow: 0 10px 30px rgba(56,189,248,0.45);
+    }
+    .btn-primary:hover {
+      filter: brightness(1.05);
+      text-decoration: none;
+    }
+    .btn-ghost {
+      background: rgba(15,23,42,0.8);
+      color: var(--fg);
+      border-color: var(--border);
+    }
+    .btn-ghost:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .hero-card {
+      border-radius: 18px;
+      border: 1px solid rgba(148,163,184,0.22);
+      background: radial-gradient(circle at top, rgba(56,189,248,0.4), transparent 58%),
+                  radial-gradient(circle at bottom, #020617, #020617);
+      padding: 1.4rem 1.3rem 1.2rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(15,23,42,0.7);
+    }
+    .hero-card h2 {
+      font-size: 0.95rem;
+      margin: 0 0 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: rgba(248,250,252,0.9);
+    }
+    .metric-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.2rem;
+    }
+    .metric {
+      flex: 1 1 110px;
+      padding: 0.65rem 0.7rem;
+      border-radius: 12px;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(148,163,184,0.3);
+    }
+    .metric-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-bottom: 0.1rem;
+    }
+    .metric-value {
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+    .metric.bad .metric-value { color: var(--danger); }
+    .metric.good .metric-value { color: var(--good); }
+
+    .hero-card p {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin: 0.4rem 0 0.7rem;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-top: 0.3rem;
+    }
+    .chip {
+      font-size: 0.72rem;
+      padding: 0.12rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.35);
+      background: rgba(15,23,42,0.9);
+      color: var(--muted);
+    }
+
+    section {
+      margin-top: 2.4rem;
+    }
+    section h2 {
+      font-size: 1.15rem;
+      margin-bottom: 0.7rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: rgba(248,250,252,0.9);
+    }
+    .two-col {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.1fr);
+      gap: 1.8rem;
+    }
+    @media (max-width: 900px) {
+      .two-col {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+    p.small {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin: 0.1rem 0 0.6rem;
+    }
+    ul, ol {
+      margin: 0.2rem 0 0.6rem 1.3rem;
+      padding: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    li { margin-bottom: 0.2rem; }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1.1rem;
+    }
+    .card {
+      border-radius: 14px;
+      border: 1px solid rgba(148,163,184,0.26);
+      background: rgba(15,23,42,0.9);
+      padding: 0.85rem 0.9rem;
+    }
+    .card h3 {
+      font-size: 0.95rem;
+      margin: 0 0 0.35rem;
+    }
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-top: 0.2rem;
+    }
+    .tag {
+      font-size: 0.7rem;
+      border-radius: 999px;
+      padding: 0.05rem 0.55rem;
+      border: 1px solid rgba(148,163,184,0.4);
+      color: var(--muted);
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.2rem 1.25rem 2rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: center;
+      background: #020617;
+    }
   </style>
 </head>
 <body>
-  <h1>Senior Project: Malware Feature Vectorization & CNN Detection</h1>
-  <p>Author: Your Name – B.Sc. Computer Science, Class of 2025</p>
+<header>
+  <div class="nav">
+    <div class="nav-title">Malicious Android App Detection</div>
+    <nav class="nav-links">
+      <a href="#overview">Overview</a>
+      <a href="#pipeline">Pipeline</a>
+      <a href="#models">Models</a>
+      <a href="#results">Results</a>
+      <a href="https://github.com/CitrusLimons/Website">Code</a>
+    </nav>
+  </div>
+</header>
 
-  <h2>Overview</h2>
-  <p>
-    This project builds a pipeline to extract features from Android APKs, reduce
-    their cardinality, and convert them into normalized NumPy vectors suitable
-    for training a convolutional neural network (CNN) malware detector.
-  </p>
+<main>
+  <section class="hero" id="overview">
+    <div>
+      <div class="badge">
+        <span class="dot"></span>
+        CSCI 457 · Senior Project · Fall 2025
+      </div>
+      <h1>Malicious Android Application Detection</h1>
+      <p class="subtitle">
+        Static feature extraction, cardinality reduction, and vectorization of Android APKs
+        to train and evaluate machine learning models for malware detection.
+      </p>
+      <p class="meta">
+        <strong>Team:</strong> Jeff Lin, Dennis Grigoryev, Andrew Perrone, Mohammed Safi, Ziru Xia<br />
+        <strong>Advisor:</strong> Dr. Wenjia Li
+      </p>
 
-  <h2>Key Components</h2>
-  <ul>
-    <li>de>ReduceCardinality.py</code> – categorizes and filters features.</li>
-    <li><e>Vectorization.py</code> – builds vector datasets from feature files.</li>
-    <li>de>normalize_vectors.py</code> – optional L2/min–max/standard scaling.</li>
-  </ul>
+      <div class="pill-row">
+        <span class="pill">Android Malware</span>
+        <span class="pill">Static Analysis</span>
+        <span class="pill">Feature Engineering</span>
+        <span class="pill">CNN · LinearSVC · LightGBM</span>
+      </div>
 
-  <h2>Repository Links</h2>
-  <ul>
-    <li><a href="https://github.com/yourusername/your-repo-name">Project source code</a></li>
-    <li><a href="https://github.com/yourusername/your-repo-name/tree/main/reports">Report & slides</a></li>
-  </ul>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="Senior-Project_-Malicious-Application-Detection-on-Android-Fall-2025-CSCI-457.pdf">
+          View Project Slides (PDF)
+        </a>
+        <a class="btn btn-ghost" href="https://github.com/CitrusLimons/Website">
+          View Source on GitHub
+        </a>
+      </div>
+    </div>
 
-  <h2>How It Works</h2>
-  <ol>
-    <li>Extract static features from APKs into text files.</li>
-    <li>Reduce feature cardinality and write unique feature dictionaries.</li>
-    <li>Vectorize APKs into NumPy arrays and feed them to a CNN.</li>
-  </ol>
+    <aside class="hero-card">
+      <h2>Project Snapshot</h2>
+      <div class="metric-row">
+        <div class="metric">
+          <div class="metric-label">Total Features (before)</div>
+          <div class="metric-value">~2M</div>
+          <p class="small">Raw static features across AMD, DREBIN, and AndroZoo datasets.</p>
+        </div>
+        <div class="metric good">
+          <div class="metric-label">LightGBM Accuracy</div>
+          <div class="metric-value">≈ 93%</div>
+          <p class="small">Best overall precision and recall after reduction.</p>
+        </div>
+      </div>
+      <p>
+        High-dimensional sparse vectors caused memory issues and overfitting.
+        This project focuses on reducing feature cardinality and comparing
+        CNNs with classical models on the reduced vector space.
+      </p>
+      <div class="chips">
+        <span class="chip">Feature cardinality reduction</span>
+        <span class="chip">Binary & count-based vectors</span>
+        <span class="chip">Confusion matrix / F1 evaluation</span>
+      </div>
+    </aside>
+  </section>
 
-  <h2>Results</h2>
-  <p>
-    Summarize accuracy, precision/recall, or interesting findings from your experiments here.
-  </p>
+  <section id="pipeline">
+    <h2>Feature Pipeline</h2>
+    <div class="two-col">
+      <div>
+        <p class="small"><strong>Datasets & Collection</strong></p>
+        <ul>
+          <li><strong>AMD:</strong> 24,553 malware samples, 71 families (2010–2016).</li>
+          <li><strong>DREBIN:</strong> 5,560 applications, 179 malware families.[file:134]</li>
+          <li><strong>AndroZoo:</strong> Benign APKs collected via az tool with size and virus-score filters.[file:134]</li>
+        </ul>
+
+        <p class="small"><strong>Static Feature Extraction</strong></p>
+        <ul>
+          <li>Permissions, intents, hardware/software features.</li>
+          <li>Restricted API calls and libraries (e.g., de>com.google.android.*</code>).</li>
+          <li>URL domains and network endpoints grouped into behavioral categories (C2, ad networks, tracking, etc.).[file:134]</li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="small"><strong>Cardinality Reduction Strategy</strong></p>
+        <ul>
+          <li>Work on a subset of ~1,000 APKs for manageable vector size.</li>
+          <li>Truncate and categorize high-cardinality APIs, libraries, and URLs into coarse groups.</li>
+          <li>Remove underused features (below threshold) and features present in nearly every APK.[file:134]</li>
+        </ul>
+        <p class="small">
+          This reduces millions of possible features down to a few thousand, making
+          dense vectorization and model training feasible on local hardware.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="models">
+    <h2>Models & Approaches</h2>
+    <div class="card-grid">
+      <article class="card">
+        <h3>CNN Prototype</h3>
+        <p class="small">
+          Initial plan: treat APK vectors as 1D signals and train a shallow CNN for
+          binary classification (benign vs malicious). CNNs performed well on reduced vectors
+          but were prone to overfitting on sparse, high-dimensional data.[file:134]
+        </p>
+        <div class="tag-row">
+          <span class="tag">1D convolutions</span>
+          <span class="tag">Static vectors</span>
+          <span class="tag">Overfitting risk</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <h3>LinearSVC (SVM)</h3>
+        <p class="small">
+          Linear Support Vector Machine provides a strong baseline for high-dimensional
+          binary vectors. It achieved around 85% accuracy, but lagged behind boosted trees
+          on this feature space.[file:134]
+        </p>
+        <div class="tag-row">
+          <span class="tag">High-dimensional</span>
+          <span class="tag">Linear classifier</span>
+          <span class="tag">≈ 85% accuracy</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <h3>LightGBM (GBDT)</h3>
+        <p class="small">
+          Gradient Boosted Decision Trees via LightGBM handled the reduced feature set best,
+          reaching ≈93% accuracy with strong precision and recall. Histogram-based splits
+          and regularization mitigated overfitting.[file:134]
+        </p>
+        <div class="tag-row">
+          <span class="tag">Gradient Boosting</span>
+          <span class="tag">Histogram splits</span>
+          <span class="tag">Best overall performance</span>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section id="results">
+    <h2>Key Findings</h2>
+    <div class="two-col">
+      <div>
+        <p class="small"><strong>Challenges</strong></p>
+        <ul>
+          <li>~125k+ static features versus ~14k samples → extreme feature-to-sample imbalance.[file:134]</li>
+          <li>Memory constraints when building fully dense vectors at original dimensionality.</li>
+          <li>Rare single-occurrence features and duplicated library indicators increased noise.[file:134]</li>
+        </ul>
+
+        <p class="small"><strong>Lessons Learned</strong></p>
+        <ul>
+          <li>Cardinality reduction and grouping are mandatory before deep learning on APK vectors.</li>
+          <li>CNNs struggle when most features are sparse and “equally important”.[file:134]</li>
+          <li>Classical models (SVM, LightGBM) remain strong baselines for static malware detection.[file:134]</li>
+        </ul>
+      </div>
+      <div>
+        <p class="small"><strong>Outcome</strong></p>
+        <ul>
+          <li>End-to-end pipeline: APK collection → static feature extraction → categorical reduction → vectorization → model training and evaluation.</li>
+          <li>Best-performing configuration: reduced feature set + LightGBM with tuned hyperparameters.[file:134]</li>
+          <li>Supporting CNN experiments illustrate trade-offs between expressiveness and overfitting on sparse inputs.[file:134]</li>
+        </ul>
+        <p class="small">
+          Future work could integrate dynamic features, explore federated learning, or pair static vectors
+          with LLM-based code summarization for richer semantic signals.
+        </p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div>CSCI 457 – Senior Project · Malicious Android Application Detection · Fall 2025</div>
+  <div>Repository: <a href="https://github.com/CitrusLimons/Website">CitrusLimons/Website</a></div>
+</footer>
 </body>
 </html>
