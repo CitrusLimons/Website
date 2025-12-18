@@ -16,6 +16,7 @@
       --border: #1f2937;
       --danger: #f97373;
       --good: #4ade80;
+      --team-highlight: #facc15;
     }
     * { box-sizing: border-box; }
     body {
@@ -119,11 +120,23 @@
       margin-bottom: 0.9rem;
     }
     .meta {
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       color: var(--muted);
       margin-bottom: 0.9rem;
+      padding: 0.6rem 0.8rem;
+      border-radius: 12px;
+      background: radial-gradient(circle at left, rgba(250,204,21,0.2), transparent 55%);
+      border: 1px solid rgba(250,204,21,0.4);
     }
     .meta strong { color: var(--fg); }
+    .meta-team-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--team-highlight);
+      display: block;
+      margin-bottom: 0.25rem;
+    }
 
     .pill-row {
       display: flex;
@@ -306,6 +319,36 @@
       color: var(--muted);
     }
 
+    .team-section {
+      margin-top: 1.8rem;
+      padding: 1rem 1.1rem;
+      border-radius: 14px;
+      border: 1px solid rgba(250,204,21,0.5);
+      background: radial-gradient(circle at left, rgba(250,204,21,0.18), rgba(15,23,42,0.95));
+    }
+    .team-section-title {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--team-highlight);
+      margin: 0 0 0.4rem;
+    }
+    .team-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem 1.6rem;
+      font-size: 0.9rem;
+      color: var(--fg);
+    }
+    .team-label {
+      font-weight: 600;
+      color: var(--fg);
+    }
+    .team-advisor {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
     footer {
       border-top: 1px solid var(--border);
       padding: 1.2rem 1.25rem 2rem;
@@ -322,6 +365,7 @@
     <div class="nav-title">Malicious Android App Detection</div>
     <nav class="nav-links">
       <a href="#overview">Overview</a>
+      <a href="#team">Team</a>
       <a href="#pipeline">Pipeline</a>
       <a href="#models">Models</a>
       <a href="#results">Results</a>
@@ -343,6 +387,7 @@
         to train and evaluate machine learning models for malware detection.
       </p>
       <p class="meta">
+        <span class="meta-team-label">Team & Advisor</span>
         <strong>Team:</strong> Jeff Lin, Dennis Grigoryev, Andrew Perrone, Mohammed Safi, Ziru Xia<br />
         <strong>Advisor:</strong> Dr. Wenjia Li
       </p>
@@ -364,6 +409,30 @@
         <a class="btn btn-ghost" href="https://github.com/CitrusLimons/Website">
           View Source on GitHub
         </a>
+      </div>
+
+      <div class="team-section" id="team">
+        <p class="team-section-title">Team & Collaborators</p>
+        <div class="team-grid">
+          <div>
+            <span class="team-label">Jeff Lin</span> · Data pipeline & model training
+          </div>
+          <div>
+            <span class="team-label">Dennis Grigoryev</span> · Feature engineering & evaluation
+          </div>
+          <div>
+            <span class="team-label">Andrew Perrone</span> · Dataset curation & experiments
+          </div>
+          <div>
+            <span class="team-label">Mohammed Safi</span> · Analysis & tooling
+          </div>
+          <div>
+            <span class="team-label">Ziru Xia</span> · Reporting & visualization
+          </div>
+        </div>
+        <p class="team-advisor" style="margin-top:0.6rem;">
+          <strong>Faculty Advisor:</strong> Dr. Wenjia Li (New York Institute of Technology)
+        </p>
       </div>
     </div>
 
