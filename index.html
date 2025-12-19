@@ -441,17 +441,17 @@
         <div class="metric">
           <div class="metric-label">Total features (before)</div>
           <div class="metric-value">~2M</div>
-          <p class="small">Combined static features from AMD, DREBIN, and AndroZoo datasets.[web:12][web:17][web:20]</p>
+          <p class="small">Combined static features from AMD, DREBIN, and AndroZoo datasets</p>
         </div>
         <div class="metric good">
           <div class="metric-label">LightGBM accuracy</div>
           <div class="metric-value">≈ 93%</div>
-          <p class="small">Best overall results on the reduced feature set in this project.[web:15][web:18]</p>
+          <p class="small">Best overall results on the reduced feature set in this project.</p>
         </div>
       </div>
       <p>
         The original feature space was large and sparse, which led to memory problems and overfitting. 
-        The work here focuses on cutting down the number of features and comparing deep and classical models on the smaller vectors.[web:11][web:26]
+        The work here focuses on cutting down the number of features and comparing deep and classical models on the smaller vectors.
       </p>
       <div class="chips">
         <span class="chip">Feature reduction</span>
@@ -467,16 +467,16 @@
       <div>
         <p class="small"><strong>Datasets & collection</strong></p>
         <ul>
-          <li><strong>AMD:</strong> 24,553 malware samples across 71 families (2010–2016).[web:10]</li>
-          <li><strong>DREBIN:</strong> Around 5,500 apps with labeled malware families.[web:17]</li>
-          <li><strong>AndroZoo:</strong> Benign APKs gathered with size and virus‑score filters.[web:20]</li>
+          <li><strong>AMD:</strong> 24,553 malware samples across 71 families (2010–2016).</li>
+          <li><strong>DREBIN:</strong> Around 5,500 apps with labeled malware families.</li>
+          <li><strong>AndroZoo:</strong> Benign APKs gathered with size and virus‑score filters.</li>
         </ul>
 
         <p class="small"><strong>Static feature extraction</strong></p>
         <ul>
-          <li>Permissions, intents, and hardware/software features from the manifest.[web:17][web:26]</li>
+          <li>Permissions, intents, and hardware/software features from the manifest.</li>
           <li>Restricted API calls and libraries from the code.</li>
-          <li>URL domains and endpoints grouped into categories such as C2, ad networks, and tracking.[web:12][web:23]</li>
+          <li>URL domains and endpoints grouped into categories such as C2, ad networks, and tracking.</li>
         </ul>
       </div>
 
@@ -488,7 +488,7 @@
           <li>Drop features that are almost never used or appear in nearly every app.</li>
         </ul>
         <p class="small">
-          This turns millions of possible features into a few thousand, so dense vectors and model training fit on local hardware.[web:11][web:24]
+          This turns millions of possible features into a few thousand, so dense vectors and model training fit on local hardware.
         </p>
       </div>
     </div>
@@ -501,7 +501,7 @@
         <h3>CNN prototype</h3>
         <p class="small">
           The project tests a simple 1D CNN on APK feature vectors for binary classification (benign vs. malicious). 
-          It works on the reduced vectors but tends to overfit when the space is very large and sparse.[web:13][web:14]
+          It works on the reduced vectors but tends to overfit when the space is very large and sparse.
         </p>
         <div class="tag-row">
           <span class="tag">1D convolutions</span>
@@ -514,7 +514,7 @@
         <h3>LinearSVC (SVM)</h3>
         <p class="small">
           A linear SVM serves as a baseline for the high‑dimensional binary vectors. 
-          In this project it reaches around 85% accuracy but falls short of boosted tree models.[web:21][web:23]
+          In this project it reaches around 85% accuracy but falls short of boosted tree models.
         </p>
         <div class="tag-row">
           <span class="tag">High‑dimensional</span>
@@ -526,7 +526,7 @@
       <article class="card">
         <h3>LightGBM</h3>
         <p class="small">
-          LightGBM, a gradient boosting tree model, handles the reduced feature set well and reaches about 93% accuracy with strong precision and recall.[web:18][web:24]
+          LightGBM, a gradient boosting tree model, handles the reduced feature set well and reaches about 93% accuracy with strong precision and recall.
           Regularization and histogram splits help control overfitting.
         </p>
         <div class="tag-row">
@@ -544,27 +544,27 @@
       <div>
         <p class="small"><strong>Challenges</strong></p>
         <ul>
-          <li>~125k+ static features versus ~14k samples, so the feature space is much larger than the dataset.[web:11]</li>
+          <li>~125k+ static features versus ~14k samples, so the feature space is much larger than the dataset.</li>
           <li>Dense vectors at the original size quickly hit memory limits on standard hardware.</li>
-          <li>Many very rare features and duplicated library indicators add noise instead of signal.[web:26]</li>
+          <li>Many very rare features and duplicated library indicators add noise instead of signal.</li>
         </ul>
 
         <p class="small"><strong>What worked</strong></p>
         <ul>
-          <li>Reducing feature count and grouping related features is basically required before training deep models on APK vectors.[web:13][web:14]</li>
+          <li>Reducing feature count and grouping related features is basically required before training deep models on APK vectors.</li>
           <li>CNNs have trouble when most features are sparse and roughly equal in importance.</li>
-          <li>Classical models like SVM and LightGBM remain strong baselines for static Android malware detection.[web:18][web:24][web:27]</li>
+          <li>Classical models like SVM and LightGBM remain strong baselines for static Android malware detection.</li>
         </ul>
       </div>
       <div>
         <p class="small"><strong>Outcome</strong></p>
         <ul>
-          <li>Built an end‑to‑end pipeline: collect APKs → extract static features → reduce and group features → build vectors → train and evaluate models.[web:11][web:17]</li>
-          <li>Best run uses the reduced feature set with a tuned LightGBM model.[web:18][web:24]</li>
-          <li>CNN experiments show the trade‑off between model capacity and overfitting on sparse data.[web:13][web:14]</li>
+          <li>Built an end‑to‑end pipeline: collect APKs → extract static features → reduce and group features → build vectors → train and evaluate models.</li>
+          <li>Best run uses the reduced feature set with a tuned LightGBM model.</li>
+          <li>CNN experiments show the trade‑off between model capacity and overfitting on sparse data.</li>
         </ul>
         <p class="small">
-          Future work could add dynamic analysis, try federated setups, or combine static vectors with code‑aware models for richer signals.[web:15][web:21]
+          Future work could add dynamic analysis, try federated setups, or combine static vectors with code‑aware models for richer signals.
         </p>
       </div>
     </div>
